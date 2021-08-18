@@ -65,6 +65,45 @@ int main(int argc, char** argv)
     // 浮点数比较，相同
     assert(document["pi"] == 3.1416);
 
+    // 转移语义
+    rapidjson::Value a_value(123);
+    rapidjson::Value b_value(456);
+    b_value = a_value;
+    assert(a_value.IsNull());
+    assert(b_value == 123);
+
+    // PushBack
+    rapidjson::Value a_pushback(rapidjson::kArrayType);
+    rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
+    // 循环调用PushBack
+    for (int i = 0; i < 5; ++i)
+    {
+        a_pushback.PushBack(i, allocator);
+    }
+    // 继续添加其他元素
+    a_pushback.PushBack("Lua", allocator).PushBack("Mio", allocator);
+
+    // AddMember
+    rapidjson::Value contact(rapidjson::kObjectType);
+    contact.AddMember("name", "Milo", allocator);
+    contact.AddMember("married", true, allocator);
+
+    // RemoveMember
+    contact.RemoveMember("name");   // 根据键名移除单个成员
+    // contact.RemoveAllMembers();     // 移除所有成员
+    // contact.RemoveMember(const rapidjson::Value& name);   // 移除Value
+
+    // CopyForm
+    rapidjson::Value v2(rapidjson::kObjectType);
+    v2.CopyFrom(document, allocator);   // 将整个document复制给v2
+    
+    // Swap
+    rapidjson::Value a_swap(123);
+    rapidjson::Value b_swap("hello");
+    a_swap.Swap(b_swap);
+    assert(a_swap.IsString());
+    assert(b_swap.IsInt());
+
     // 正常返回
     return 0;
 }
